@@ -1,4 +1,6 @@
 const { Octokit } = require("@octokit/core");
+const yaml = require('js-yaml');
+const fs = require('fs');
 
 // Set up auth for Octokit 
 const octokit = new Octokit({
@@ -7,6 +9,19 @@ const octokit = new Octokit({
 
 // Set organization name
 let org = "ash-tree-development"
+let configFile = "teams.yaml"
+
+
+// Function to read yaml config
+function readConfig() {
+    try {
+        const doc = yaml.load(fs.readFileSync(configFile, 'utf8'));
+        console.log(doc);
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 
 // Function to get all teams in the org
 async function getTeams() {
@@ -48,6 +63,6 @@ async function getTeam(teamslug) {
     // console.log(await getTeams());
 
     // createTeam("test-1", "an example team 1")
-
-    console.log(await getTeam("test-1"))
+    // console.log(await getTeam("test-1"))
+    readConfig()
 })();

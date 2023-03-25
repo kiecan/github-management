@@ -1,0 +1,14 @@
+---
+teams:
+  team-1:
+    name: "test-team-1"
+    description: "A great first team"
+    parent: 
+  team-2:
+    name: "test-team-2"
+    description: "A great second team"
+    parent:
+  team-3:
+    name: "test-team-3"
+    description: "A great third team"
+    parent: "test-team-2"
