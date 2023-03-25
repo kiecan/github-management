@@ -4,7 +4,7 @@ const fs = require('fs');
 
 // Set up auth for Octokit 
 const octokit = new Octokit({
-    auth: process.env.ORG_GH_TOKEN
+    auth: process.env.GH_TOKEN
 })
 
 // Set organization name
@@ -60,9 +60,9 @@ async function getTeam(teamslug) {
 
 // Call start
 (async () => {
-    // console.log(await getTeams());
+    console.log(await getTeams());
 
     // createTeam("test-1", "an example team 1")
     // console.log(await getTeam("test-1"))
-    readConfig()
+    // readConfig()
 })();
