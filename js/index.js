@@ -2,7 +2,7 @@ const { Octokit } = require("@octokit/core");
 const yaml = require('js-yaml');
 const fs = require('fs');
 
-// Set up auth for Octokit 
+// Set up auth for Octokit
 const octokit = new Octokit({
     auth: process.env.GH_TOKEN
 })
@@ -16,7 +16,7 @@ let configFile = "teams.yaml"
 function readConfig() {
     try {
         const doc = yaml.load(fs.readFileSync(configFile, 'utf8'));
-        console.log(doc);
+        return doc
     } catch (e) {
         console.log(e);
     }
@@ -60,7 +60,10 @@ async function getTeam(teamslug) {
 
 // Call start
 (async () => {
-    console.log(await getTeams());
+    // console.log(await getTeams());
+
+    teamConfig = readConfig()
+    console.log(teamConfig)
 
     // createTeam("test-1", "an example team 1")
     // console.log(await getTeam("test-1"))
