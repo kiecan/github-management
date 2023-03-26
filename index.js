@@ -33,13 +33,14 @@ async function getTeams () {
 }
 
 // Function to create team
-async function createTeam (name, description) {
+async function createTeam (name, description, parentId) {
   await octokit.request('POST /orgs/{org}/teams', {
     org: `${org}`,
     name: `${name}`,
     description: `${description}`,
     permission: 'push',
     privacy: 'closed',
+    parent_team_id: `${parentId}`,
     headers: {
       'X-GitHub-Api-Version': '2022-11-28'
     }
@@ -47,12 +48,13 @@ async function createTeam (name, description) {
 }
 
 // Function to update team
-async function updateTeam (name, description) {
+async function updateTeam (name, description, parentId) {
   await octokit.request('PATCH /orgs/{org}/teams/{team_slug}', {
     org: `${org}`,
     name: `${name}`,
     description: `${description}`,
     team_slug: `${name}`,
+    parent_team_id: parentId,
     headers: {
       'X-GitHub-Api-Version': '2022-11-28'
     }
@@ -79,6 +81,11 @@ async function teamExists (team) {
   }
 }
 
+async function getTeamId (team) {
+  const teamInfo = await getTeam(team)
+  return teamInfo.data.id
+}
+
 // Call start
 (async () => {
   const teamConfig = readConfig()
@@ -90,12 +97,16 @@ async function teamExists (team) {
     for (const key1 in obj[key]) {
       const team = obj[key][key1]
 
+      // Check if team has parent, if so get parent id, otherwise set to null
+      const parentId = team.parent ? await getTeamId(team.parent) : null
+
+      // Check if team exists, if so update, otherwise create
       if (await teamExists(team.name)) {
         console.log(`Team ${team.name} exists. Updating...`)
-        updateTeam(team.name, team.description)
+        updateTeam(team.name, team.description, parentId)
       } else {
         console.log(`Team ${team.name} does not exist. Creating...`)
-        createTeam(team.name, team.description)
+        createTeam(team.name, team.description, parentId)
       }
     }
   }
