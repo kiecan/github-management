@@ -1,3 +1,4 @@
+require('dotenv').config()
 const { Octokit } = require('@octokit/core')
 const yaml = require('js-yaml')
 const fs = require('fs')
@@ -7,9 +8,9 @@ const octokit = new Octokit({
   auth: process.env.GH_TOKEN
 })
 
-// Set organization name
-const org = 'ash-tree-development'
-const configFile = 'teams.yaml'
+// Load env variables
+const org = process.env.ORG
+const configFile = process.env.CONFIG_FILE
 
 // Function to read yaml config
 function readConfig () {
