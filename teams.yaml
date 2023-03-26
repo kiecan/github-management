@@ -10,5 +10,5 @@ teams:
     parent:
   team-3:
     name: "test-team-3"
-    description: "A great third team"
+    description: "A great third team beneath test-team-2"
     parent: "test-team-2"

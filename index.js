@@ -23,14 +23,14 @@ function readConfig () {
 }
 
 // Function to get all teams in the org
-// async function getTeams () {
-//   return await octokit.request('GET /orgs/{org}/teams', {
-//     org: `${org}`,
-//     headers: {
-//       'X-GitHub-Api-Version': '2022-11-28'
-//     }
-//   })
-// }
+async function getTeams () {
+  return await octokit.request('GET /orgs/{org}/teams', {
+    org: `${org}`,
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28'
+    }
+  })
+}
 
 // Function to create team
 async function createTeam (name, description) {
@@ -46,11 +46,24 @@ async function createTeam (name, description) {
   })
 }
 
+// Function to update team
+async function updateTeam (name, description) {
+  await octokit.request('PATCH /orgs/{org}/teams/{team_slug}', {
+    org: `${org}`,
+    name: `${name}`,
+    description: `${description}`,
+    team_slug: `${name}`,
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28'
+    }
+  })
+}
+
 // Function to get team based on team-slug
-async function getTeam (teamslug) {
+async function getTeam (name) {
   return await octokit.request('GET /orgs/{org}/teams/{team_slug}', {
     org: `${org}`,
-    team_slug: `${teamslug}`,
+    team_slug: `${name}`,
     headers: {
       'X-GitHub-Api-Version': '2022-11-28'
     }
@@ -78,7 +91,8 @@ async function teamExists (team) {
       const team = obj[key][key1]
 
       if (await teamExists(team.name)) {
-        console.log(`Team ${team.name} exists`)
+        console.log(`Team ${team.name} exists. Updating...`)
+        updateTeam(team.name, team.description)
       } else {
         console.log(`Team ${team.name} does not exist. Creating...`)
         createTeam(team.name, team.description)
@@ -86,5 +100,5 @@ async function teamExists (team) {
     }
   }
 
-  // console.log(await getTeams())
+  console.log(await getTeams())
 })()
