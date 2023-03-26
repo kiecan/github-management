@@ -73,7 +73,7 @@ async function getTeam (name) {
 async function teamExists (team) {
   try {
     await getTeam(team)
-    return true // returns true if response is successful
+    return true
   } catch {
     return false
   }
