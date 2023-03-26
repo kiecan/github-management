@@ -15,21 +15,22 @@ const configFile = 'teams.yaml'
 function readConfig () {
   try {
     const doc = yaml.load(fs.readFileSync(configFile, 'utf8'))
-    return doc
+    const jsonString = JSON.stringify(doc)
+    return jsonString
   } catch (e) {
     console.log(e)
   }
 }
 
 // Function to get all teams in the org
-async function getTeams () {
-  return await octokit.request('GET /orgs/{org}/teams', {
-    org: `${org}`,
-    headers: {
-      'X-GitHub-Api-Version': '2022-11-28'
-    }
-  })
-}
+// async function getTeams () {
+//   return await octokit.request('GET /orgs/{org}/teams', {
+//     org: `${org}`,
+//     headers: {
+//       'X-GitHub-Api-Version': '2022-11-28'
+//     }
+//   })
+// }
 
 // Function to create team
 async function createTeam (name, description) {
@@ -56,13 +57,34 @@ async function getTeam (teamslug) {
   })
 }
 
+async function teamExists (team) {
+  try {
+    await getTeam(team)
+    return true // returns true if response is successful
+  } catch {
+    return false
+  }
+}
+
 // Call start
 (async () => {
-  console.log(await getTeams())
-
   const teamConfig = readConfig()
-  console.log(teamConfig)
 
-  createTeam('test-1', 'an example team 1')
-  console.log(await getTeam('test-1'))
+  // Converting JSON-encoded string to JS object
+  const obj = JSON.parse(teamConfig)
+
+  for (const key in obj) {
+    for (const key1 in obj[key]) {
+      const team = obj[key][key1]
+
+      if (await teamExists(team.name)) {
+        console.log(`Team ${team.name} exists`)
+      } else {
+        console.log(`Team ${team.name} does not exist. Creating...`)
+        createTeam(team.name, team.description)
+      }
+    }
+  }
+
+  // console.log(await getTeams())
 })()
